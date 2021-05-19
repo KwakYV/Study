@@ -1,3 +1,6 @@
+/**
+ * Class Robot
+ */
 public class Robot implements Trackable{
     private int height;
     private int distance;

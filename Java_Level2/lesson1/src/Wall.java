@@ -1,3 +1,6 @@
+/**
+ * Class Wall
+ */
 public class Wall implements Finishable{
     private int height;
 

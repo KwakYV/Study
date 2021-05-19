@@ -1,3 +1,6 @@
+/**
+ * Class human
+ */
 public class Human implements Trackable{
     private int height;
     private int distance;

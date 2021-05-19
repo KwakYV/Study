@@ -1,3 +1,6 @@
+/**
+ * Entry point
+ */
 public class TestLesson1 {
     public static void main(String[] args) {
         Trackable[] participants = new Trackable[3];

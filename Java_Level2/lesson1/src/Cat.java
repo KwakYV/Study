@@ -1,3 +1,6 @@
+/**
+ * Class Cat
+ */
 public class Cat implements Trackable{
     private int height;
     private int distance;

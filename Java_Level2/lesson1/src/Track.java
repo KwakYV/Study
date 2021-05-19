@@ -1,3 +1,6 @@
+/**
+ * Class track
+ */
 public class Track implements Finishable{
     private int distance;
 
