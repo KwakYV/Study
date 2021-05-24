@@ -26,9 +26,7 @@ public class TestExceptions {
 //            int sum = sumElements(test3);
             int sum = sumElements(test4);
             System.out.println(sum);
-        }catch(MyArraySizeException e){
-            System.out.println(e.getMessage());
-        }catch(MyArrayDataException e){
+        }catch(MyArraySizeException | MyArrayDataException e){
             System.out.println(e.getMessage());
         }
     }
