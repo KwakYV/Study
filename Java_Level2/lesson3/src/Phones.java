@@ -22,14 +22,9 @@ public class Phones {
     }
 
     public void putPhone(String surname, String phoneNumber){
-        if (map.containsKey(surname)){
-            ArrayList<String> value = map.get(surname);
-            value.add(phoneNumber);
-            map.put(surname, value);
-        }else{
-            String[] arr = {phoneNumber};
-            map.put(surname, new ArrayList<String>(Arrays.asList(arr)));
-        }
+        ArrayList<String> value = map.getOrDefault(surname, new ArrayList<>());
+        value.add(phoneNumber);
+        map.put(surname, value);
     }
 
     @Override
