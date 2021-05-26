@@ -18,7 +18,7 @@ public class Phones {
         }
 
         String[] arr = new String[list.size()];
-        return Arrays.toString(map.get(surName).toArray(arr));
+        return map.get(surName).toString();
     }
 
     public void putPhone(String surname, String phoneNumber){
