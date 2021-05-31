@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Chat">
+   <children>
+      <SplitPane dividerPositions="0.9045226130653267" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <TextArea id="chatArea" fx:id="chatArea" layoutX="163.0" prefHeight="350.0" prefWidth="435.0" />
+                  <ListView id="userList" fx:id="userList" layoutX="4.0" prefHeight="350.0" prefWidth="155.0" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <TextField id="messageField" fx:id="messageField" onKeyPressed="#enterMessage" prefHeight="34.0" prefWidth="441.0" />
+                  <Button id="SendBtn" fx:id="btnSend" layoutX="460.0" layoutY="4.0" mnemonicParsing="false" onAction="#sendMessage" onKeyPressed="#enterMessage" prefHeight="26.0" prefWidth="124.0" text="Send" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>
