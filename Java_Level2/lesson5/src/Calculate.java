@@ -9,7 +9,7 @@ public class Calculate {
             arr[i] = 1;
         }
         long start = System.currentTimeMillis();
-        changeValues(arr);
+        changeValues(arr, 0);
         long end = System.currentTimeMillis();
         System.out.println("Execution time with 1 thread - " + (end -start));
         return arr;
@@ -28,11 +28,11 @@ public class Calculate {
         System.arraycopy(arr, HALF, second, 0, HALF);
 
         Thread fThread = new Thread(()->{
-            changeValues(first);
+            changeValues(first, 0);
         });
 
         Thread sThread = new Thread(()->{
-            changeValues(second);
+            changeValues(second, HALF);
         });
         fThread.start();
         sThread.start();
@@ -47,9 +47,9 @@ public class Calculate {
         return arr;
     }
 
-    private void changeValues(float[] array) {
+    private void changeValues(float[] array, int step) {
         for (int i = 0; i < array.length; i++) {
-            array[i] = (float)(array[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+            array[i] = (float)(array[i] * Math.sin(0.2f + (i+step) / 5) * Math.cos(0.2f + (i+step) / 5) * Math.cos(0.4f + (i+step) / 2));
         }
 
     }
