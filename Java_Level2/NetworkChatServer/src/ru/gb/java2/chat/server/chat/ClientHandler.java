@@ -9,11 +9,13 @@ public class ClientHandler {
 
     private static final String AUTH_OK_COMMAND = "/authOk";
     private static final String AUTH_COMMAND = "/auth";
+    private static final String AUTH_LOGGED = "/authLogged";
 
     private MyServer server;
     private final Socket clientSocket;
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
+    private String userName;
 
     public ClientHandler(MyServer server, Socket clientSocket) {
         this.server = server;
@@ -47,12 +49,21 @@ public class ClientHandler {
                 String[] parts = message.split(" ");
                 String login = parts[1];
                 String password = parts[2];
-
+                boolean isLogged = false;
                 String username = server.getAuthService().getUsernameByLoginAndPassword(login, password);
+
+                for (ClientHandler client : server.getClients()) {
+                    if (client.getUserName().equals(username)){
+                        isLogged = true;
+                    }
+                }
                 if (username == null) {
                     sendMessage("Некорректные логин и пароль!");
+                } else if (isLogged) {
+                    sendMessage(String.format("%s %s", AUTH_LOGGED, username));
                 } else {
                     sendMessage(String.format("%s %s",AUTH_OK_COMMAND, username));
+                    this.userName = username;
                     server.subscribe(this);
                     return;
                 }
@@ -83,6 +94,10 @@ public class ClientHandler {
 
     public void sendMessage(String message) throws IOException {
         outputStream.writeUTF(message);
+    }
+
+    public String getUserName(){
+        return this.userName;
     }
 
 }

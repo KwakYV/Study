@@ -16,6 +16,7 @@ import java.io.IOException;
 public class AuthController {
     private static final String AUTH_COMMAND = "/auth";
     private static final String AUTH_OK_COMMAND = "/authOk";
+    private static final String AUTH_LOGGED = "/authLogged";
 
     @FXML
     private TextField loginField;
@@ -66,7 +67,9 @@ public class AuthController {
                     String[] parts = message.split(" ");
                     String username = parts[1];
                     Platform.runLater(() -> ClientChat.INSTANCE.switchToMainChatWindow(username));
-                } else {
+                } else if (message.startsWith(AUTH_LOGGED)){
+                    Platform.runLater(Dialogs.AuthError.USER_IS_LOGGED::show);
+                }else {
                     Platform.runLater(Dialogs.AuthError.INVALID_CREDENTIALS::show);
                 }
             }

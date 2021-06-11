@@ -36,9 +36,13 @@ public class MyServer {
 
     public void broadcastMessage(String message, ClientHandler sender) throws IOException {
         for (ClientHandler client : clients) {
-            if (client != sender) {
-                // TODO: parse message
-                System.out.println("message from client - " + message);
+
+            String userName = message.split(":")[0];
+            if (userName.equals(message)) userName = "";
+
+            if (client != sender && "".equals(userName)) {
+                client.sendMessage(message);
+            } else if (userName.equals(client.getUserName())){
                 client.sendMessage(message);
             }
         }
@@ -54,5 +58,9 @@ public class MyServer {
 
     public AuthService getAuthService() {
         return authService;
+    }
+
+    public List<ClientHandler> getClients() {
+        return clients;
     }
 }
