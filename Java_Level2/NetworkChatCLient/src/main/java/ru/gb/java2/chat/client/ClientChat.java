@@ -112,6 +112,8 @@ public class ClientChat extends Application {
 
     public void switchToMainChatWindow(String username) {
         getPrimaryStage().setTitle(username);
+        getChatController().setLogin(getAuthController().getLogin());
+        getChatController().setPassword(getAuthController().getPassword());
         getChatController().initMessageHandler();
         getAuthController().close();
         getAuthStage().close();
