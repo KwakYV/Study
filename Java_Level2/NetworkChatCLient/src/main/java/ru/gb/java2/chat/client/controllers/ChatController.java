@@ -35,6 +35,9 @@ public class ChatController {
     @FXML
     private TextArea messageTextArea;
 
+    private String login;
+    private String password;
+
 
     @FXML
     private void sendMessage() {
@@ -105,10 +108,19 @@ public class ChatController {
         Platform.runLater(() -> usersList.setItems(FXCollections.observableArrayList(users)));
     }
 
-    public void reconnectToServer(ActionEvent actionEvent) {
+    public void reconnectToServer(ActionEvent actionEvent) throws IOException {
         Network network = Network.getInstance();
         if (!network.isConnected()) {
             network.connect();
+            network.sendAuthMessage(this.login, this.password);
         }
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
