@@ -1,7 +1,6 @@
 package ru.gb.java2.chat.client.controllers;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -14,7 +13,6 @@ import ru.gb.java2.chat.client.model.ReadCommandListener;
 import ru.gb.java2.chat.clientserver.Command;
 import ru.gb.java2.chat.clientserver.CommandType;
 import ru.gb.java2.chat.clientserver.commands.AuthOkCommandData;
-import ru.gb.java2.chat.clientserver.commands.UpdateUsersListCommandData;
 
 import java.io.IOException;
 
@@ -27,12 +25,15 @@ public class AuthController {
     @FXML
     private Button authButton;
     private ReadCommandListener readMessageListener;
-
+    private String login;
+    private String password;
 
     @FXML
     public void executeAuth(ActionEvent actionEvent) {
         String login = loginField.getText();
         String password = passwordField.getText();
+        this.login = login;
+        this.password = password;
         if (login == null || login.isBlank() || password == null || password.isBlank()) {
             Dialogs.AuthError.EMPTY_CREDENTIALS.show();
             return;
@@ -68,7 +69,9 @@ public class AuthController {
                     AuthOkCommandData data = (AuthOkCommandData) command.getData();
                     String username = data.getUsername();
                     Platform.runLater(() -> ClientChat.INSTANCE.switchToMainChatWindow(username));
-                } else {
+                } else if (command.getType() == CommandType.TIMEOUT) {
+                    Platform.runLater(Dialogs.AuthError.TIMEOUT::show);
+                } else{
                     Platform.runLater(Dialogs.AuthError.INVALID_CREDENTIALS::show);
                 }
             }
@@ -77,5 +80,13 @@ public class AuthController {
 
     public void close() {
         getNetwork().removeReadMessageListener(readMessageListener);
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }
