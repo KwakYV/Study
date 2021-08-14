@@ -1,7 +1,5 @@
 public class Apple extends Fruit{
     public Apple(){
-        super();
-        setWeight(1.0f);
-        setName("Apple");
+        super(1.0f, "Apple");
     }
 }

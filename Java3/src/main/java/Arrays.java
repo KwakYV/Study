@@ -8,7 +8,8 @@ public class Arrays<E> {
     }
 
     public E[] switchElements(int first, int second){
-        if (first > elements.length + 1 || second > elements.length + 1){
+        if (first >= elements.length || second >= elements.length ||
+            first < 0 || second < 0){
             System.out.println("Indexes of switching elements must be in scope of array");
         } else{
             E firstValue = elements[first];
@@ -21,9 +22,8 @@ public class Arrays<E> {
 
     public ArrayList<E> convert(){
         ArrayList<E> result = new ArrayList<>();
-        for (E item: elements
-             ) {
-            result.add(item);
+        for (E element : elements) {
+            result.add(element);
         }
         return result;
     }

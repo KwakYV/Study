@@ -30,8 +30,7 @@ public class Box<T extends Fruit> implements Comparable<Box<?>>{
 
 
     public void moveFruits(Box<T> box){
-        for (T item: fruits
-             ) {
+        for (T item : fruits) {
             box.add(item);
         }
         fruits.clear();
