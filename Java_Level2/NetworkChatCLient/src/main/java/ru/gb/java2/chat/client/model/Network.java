@@ -112,6 +112,10 @@ public class Network {
         sendCommand(Command.authCommand(login, password));
     }
 
+    public void sendUpdateNickNameCommand(String login, String newName) throws IOException {
+        sendCommand(Command.updateNickNameCommand(login, newName));
+    }
+
     private void sendCommand(Command command) throws IOException {
         try {
             socketOutput.writeObject(command);

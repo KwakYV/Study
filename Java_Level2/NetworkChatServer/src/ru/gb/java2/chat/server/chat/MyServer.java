@@ -75,7 +75,7 @@ public class MyServer {
         }
     }
 
-    private void notifyClientsUsersListUpdated() throws IOException {
+    protected void notifyClientsUsersListUpdated() throws IOException {
         List<String> users = new ArrayList<>();
         for (ClientHandler client : clients) {
             users.add(client.getUsername());

@@ -7,8 +7,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import ru.gb.java2.chat.client.ClientChat;
 import ru.gb.java2.chat.client.dialogs.Dialogs;
 import ru.gb.java2.chat.client.model.Network;
 import ru.gb.java2.chat.client.model.ReadCommandListener;
@@ -106,6 +108,8 @@ public class ChatController {
 
     public void updateUsersList(List<String> users) {
         Platform.runLater(() -> usersList.setItems(FXCollections.observableArrayList(users)));
+        Platform.runLater(() -> usersList.setEditable(true));
+        Platform.runLater(() -> usersList.setCellFactory(TextFieldListCell.forListView()));
     }
 
     public void reconnectToServer(ActionEvent actionEvent) throws IOException {
@@ -122,5 +126,16 @@ public class ChatController {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void updateNickName(ListView.EditEvent<String> stringEditEvent) {
+        String nickName = stringEditEvent.getNewValue();
+        try {
+            Network.getInstance().sendUpdateNickNameCommand(this.login, nickName);
+            Platform.runLater(() -> ClientChat.INSTANCE.switchToMainChatWindow(nickName));
+        } catch (IOException e) {
+            Dialogs.NetworkError.UPDATE_NICKNAME_ERROR.show();
+        }
+
     }
 }

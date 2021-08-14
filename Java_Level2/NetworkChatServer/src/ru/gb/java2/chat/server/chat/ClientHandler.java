@@ -5,11 +5,15 @@ import ru.gb.java2.chat.clientserver.CommandType;
 import ru.gb.java2.chat.clientserver.commands.AuthCommandData;
 import ru.gb.java2.chat.clientserver.commands.PrivateMessageCommandData;
 import ru.gb.java2.chat.clientserver.commands.PublicMessageCommandData;
+import ru.gb.java2.chat.clientserver.commands.UpdateNickNameCommand;
+import ru.gb.java2.chat.server.chat.dao.UserDao;
+import ru.gb.java2.chat.server.chat.dao.UserDaoImpl;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,7 +40,9 @@ public class ClientHandler {
                 readMessages();
             } catch (IOException e) {
                 System.err.println("Failed to process message from client");
-            } finally {
+            } catch(SQLException sqlErr) {
+                sqlErr.printStackTrace();
+            }finally {
                 try {
                     closeConnection();
                 } catch (IOException e) {
@@ -107,7 +113,7 @@ public class ClientHandler {
         clientSocket.close();
     }
 
-    private void readMessages() throws IOException {
+    private void readMessages() throws IOException, SQLException {
         while (true) {
             Command command = readCommand();
             if (command == null) {
@@ -127,6 +133,13 @@ public class ClientHandler {
                 case PUBLIC_MESSAGE: {
                     PublicMessageCommandData data = (PublicMessageCommandData) command.getData();
                     processMessage(data.getMessage());
+                }
+                case UPDATE_NICKNAME: {
+                    UpdateNickNameCommand data = (UpdateNickNameCommand) command.getData();
+                    UserDao dao = new UserDaoImpl();
+                    dao.updateNickName(data.getSender(), data.getNickName());
+                    this.username = data.getNickName();
+                    server.notifyClientsUsersListUpdated();
                 }
             }
         }
