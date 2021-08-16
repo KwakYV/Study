@@ -7,18 +7,18 @@ public class UserDaoImpl implements UserDao{
     private static Connection conn;
     private static PreparedStatement statement;
 
-    private static void connect() throws SQLException {
+    private static void connect(String sql) throws SQLException {
         Properties property = new Properties();
         property.setProperty("user", "yuriy");
         property.setProperty("password", "java3");
         conn =  DriverManager.getConnection("jdbc:postgresql://localhost:5432/chat", property);
+        statement = conn.prepareStatement(sql);
     }
 
     @Override
     public String getNickName(String login) {
         try{
-            connect();
-            statement = conn.prepareStatement("select nickname from chat.users where login = ?");
+            connect("select nickname from chat.users where login = ?");
             statement.setString(1, login);
             ResultSet rs = statement.executeQuery();
             if (rs.next()){
@@ -53,8 +53,7 @@ public class UserDaoImpl implements UserDao{
     @Override
     public boolean isAuthorized(String login, String password) {
         try {
-            connect();
-            statement = conn.prepareStatement("select 1 as isauthorized from chat.users where login = ? and password = ?");
+            connect("select id from chat.users where login = ? and password = ?");
             statement.setString(1, login);
             statement.setString(2, password);
             ResultSet rs = statement.executeQuery();
@@ -70,8 +69,7 @@ public class UserDaoImpl implements UserDao{
     @Override
     public void updateNickName(String login, String newNickName) throws SQLException {
         try {
-            connect();
-            statement = conn.prepareStatement("update chat.users set nickname = ? where login = ?");
+            connect("update chat.users set nickname = ? where login = ?");
             statement.setString(1, newNickName);
             statement.setString(2, login);
             statement.executeUpdate();
