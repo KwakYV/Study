@@ -114,6 +114,7 @@ public class ClientChat extends Application {
         getPrimaryStage().setTitle(username);
         getChatController().setLogin(getAuthController().getLogin());
         getChatController().setPassword(getAuthController().getPassword());
+        getChatController().loadHistory();
         getChatController().initMessageHandler();
         getAuthController().close();
         getAuthStage().close();
