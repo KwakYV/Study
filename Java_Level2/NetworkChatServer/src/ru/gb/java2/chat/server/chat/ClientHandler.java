@@ -134,6 +134,7 @@ public class ClientHandler {
                 case PUBLIC_MESSAGE: {
                     PublicMessageCommandData data = (PublicMessageCommandData) command.getData();
                     processMessage(data.getMessage());
+                    break;
                 }
                 case UPDATE_NICKNAME: {
                     UpdateNickNameCommand data = (UpdateNickNameCommand) command.getData();
@@ -141,6 +142,7 @@ public class ClientHandler {
                     dao.updateNickName(data.getSender(), data.getNickName());
                     this.username = data.getNickName();
                     server.notifyClientsUsersListUpdated();
+                    break;
                 }
             }
         }
