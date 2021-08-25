@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
 
 public class ClientHandler {
 
@@ -30,11 +31,11 @@ public class ClientHandler {
         this.clientSocket = clientSocket;
     }
 
-    public void handle() throws IOException {
+    public void handle(ExecutorService service) throws IOException {
         inputStream = new ObjectInputStream(clientSocket.getInputStream());
         outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 
-        new Thread(() -> {
+        service.execute(() -> {
             try {
                 authentication();
                 readMessages();
@@ -49,7 +50,7 @@ public class ClientHandler {
                     System.err.println("Failed to close connection");
                 }
             }
-        }).start();
+        });
     }
 
     private void authentication() throws IOException {
