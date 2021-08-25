@@ -15,10 +15,10 @@ public class MyServer {
 
     private final List<ClientHandler> clients = new ArrayList<>();
     private AuthService authService;
-    private ExecutorService fixedExecService;
+    private ExecutorService cachedService;
 
     public MyServer() {
-        fixedExecService = Executors.newFixedThreadPool(5);
+        cachedService = Executors.newCachedThreadPool();
     }
 
     public void start(int port) {
@@ -32,7 +32,7 @@ public class MyServer {
             System.err.println("Failed to bind port " + port);
             e.printStackTrace();
         }finally {
-            fixedExecService.shutdown();
+            cachedService.shutdown();
         }
     }
 
@@ -41,7 +41,7 @@ public class MyServer {
         Socket clientSocket = serverSocket.accept();
         System.out.println("Client has been connected");
         ClientHandler clientHandler = new ClientHandler(this, clientSocket);
-        clientHandler.handle(fixedExecService);
+        clientHandler.handle(cachedService);
     }
 
     public synchronized void broadcastMessage(String message, ClientHandler sender) throws IOException {
