@@ -82,7 +82,7 @@ public class ChatController {
         chatHistory.appendText(System.lineSeparator());
         chatHistory.appendText(System.lineSeparator());
         String toLog = chatHistory.getText(from, chatHistory.getText().length());
-        logging.log(logFile, toLog);
+        logging.log(toLog);
         messageTextArea.clear();
     }
 
@@ -100,7 +100,7 @@ public class ChatController {
 
     public void loadHistory(){
         logFile = new File(String.format("history_%s.txt", login));
-        logging = Logging.getInstance();
+        logging = Logging.getInstance(logFile);
         if (logFile.exists()){
             chatHistory.appendText(logging.readLastLines(logFile, 10));
         }

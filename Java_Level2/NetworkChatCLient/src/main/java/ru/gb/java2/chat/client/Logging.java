@@ -1,23 +1,30 @@
 package ru.gb.java2.chat.client;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 public class Logging {
+    public static final int NEW_LINE_CHAR = 10;
     private static Logging INSTANCE;
+    private static BufferedWriter writer;
 
-    private Logging(){
+    private Logging(File file){
+        try {
+            writer = new BufferedWriter(new FileWriter(file, true));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static Logging getInstance(){
+    public static Logging getInstance(File file){
         if (INSTANCE == null){
-            INSTANCE = new Logging();
+            INSTANCE = new Logging(file);
         }
         return INSTANCE;
     }
 
-    public void log(File file, String message){
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))){
+
+    public void log(String message){
+        try{
             writer.write(message);
         } catch (IOException err){
             err.printStackTrace();
@@ -26,7 +33,6 @@ public class Logging {
 
     public String readLastLines(File aFile, int number){
         try(RandomAccessFile file = new RandomAccessFile(aFile, "r")){
-            StringBuilder historyBuilder = new StringBuilder();
 
             int x = 0;
             long startPosition = file.length() -1;
@@ -34,18 +40,18 @@ public class Logging {
 
             while (count <= number + 1 ){
                 x = file.read();
-                if (x == 10){
+                if (x == NEW_LINE_CHAR){
                     count++;
                 }
                 startPosition = startPosition - 1;
                 file.seek(startPosition);
             }
 
-            while (startPosition != file.length()){
-                historyBuilder.append((char)file.read());
-                startPosition = startPosition + 1;
-            }
-            return new String(historyBuilder.toString().getBytes(StandardCharsets.UTF_8), "UTF-8");
+            long bytesLength = file.length() - startPosition;
+            byte[] history = new byte[(int) bytesLength];
+            file.read(history);
+            return new String(history, "UTF-8");
+
         }catch(IOException err){
             err.printStackTrace();
         }
