@@ -21,8 +21,10 @@ public class Road extends Stage{
             if (isLast && !isFirst){
                 try{
                     lock.lock();
-                    isFirst = true;
-                    System.out.println(c.getName() + " закончил этап: " + description + " и стал победителем!!!!");
+                    if (!isFirst){
+                        isFirst = true;
+                        System.out.println(c.getName() + " закончил этап: " + description + " и стал победителем!!!!");
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
                 }finally {
