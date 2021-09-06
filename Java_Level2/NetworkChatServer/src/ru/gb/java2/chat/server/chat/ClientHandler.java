@@ -39,14 +39,15 @@ public class ClientHandler {
                 authentication();
                 readMessages();
             } catch (IOException e) {
-                System.err.println("Failed to process message from client");
+                server.getLogger().error("Failed to process message from client");
             } catch(SQLException sqlErr) {
-                sqlErr.printStackTrace();
+                server.getLogger().error(sqlErr);
             }finally {
+                server.getLogger().info("Closing connection with client");
                 try {
                     closeConnection();
                 } catch (IOException e) {
-                    System.err.println("Failed to close connection");
+                    server.getLogger().error("Failed to close connection");
                 }
             }
         }).start();
@@ -73,7 +74,7 @@ public class ClientHandler {
             if (command == null) {
                 continue;
             }
-
+            server.getLogger().info("Client sent an auth command");
             if (command.getType() == CommandType.AUTH) {
                 AuthCommandData data = (AuthCommandData) command.getData();
                 String login    = data.getLogin();
@@ -119,7 +120,7 @@ public class ClientHandler {
             if (command == null) {
                 continue;
             }
-
+            server.getLogger().info("Client sent a command");
             switch (command.getType()) {
                 case END:
                     return;
