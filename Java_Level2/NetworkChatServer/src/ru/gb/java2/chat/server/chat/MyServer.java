@@ -10,12 +10,22 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MyServer {
 
     private final List<ClientHandler> clients = new ArrayList<>();
     private AuthService authService;
+
     private static final Logger LOGGER = LogManager.getLogger(MyServer.class.getName());
+
+    private ExecutorService cachedService;
+
+    public MyServer() {
+        cachedService = Executors.newCachedThreadPool();
+    }
+
 
     public void start(int port) {
         LOGGER.info(String.format("Starting server at port {}", port));
@@ -26,8 +36,15 @@ public class MyServer {
                 waitAndProcessNewClientConnection(serverSocket);
             }
         } catch (IOException e) {
+
             LOGGER.error(String.format("Failed to bind port {}", port));
             LOGGER.debug(e);
+
+            System.err.println("Failed to bind port " + port);
+            e.printStackTrace();
+        }finally {
+            cachedService.shutdown();
+
         }
     }
 
@@ -36,7 +53,7 @@ public class MyServer {
         Socket clientSocket = serverSocket.accept();
         LOGGER.info("Client has been connected");
         ClientHandler clientHandler = new ClientHandler(this, clientSocket);
-        clientHandler.handle();
+        clientHandler.handle(cachedService);
     }
 
     public synchronized void broadcastMessage(String message, ClientHandler sender) throws IOException {

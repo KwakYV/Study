@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
 
 public class ClientHandler {
 
@@ -30,11 +31,11 @@ public class ClientHandler {
         this.clientSocket = clientSocket;
     }
 
-    public void handle() throws IOException {
+    public void handle(ExecutorService service) throws IOException {
         inputStream = new ObjectInputStream(clientSocket.getInputStream());
         outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 
-        new Thread(() -> {
+        service.execute(() -> {
             try {
                 authentication();
                 readMessages();
@@ -50,7 +51,7 @@ public class ClientHandler {
                     server.getLogger().error("Failed to close connection");
                 }
             }
-        }).start();
+        });
     }
 
     private void authentication() throws IOException {
@@ -134,6 +135,7 @@ public class ClientHandler {
                 case PUBLIC_MESSAGE: {
                     PublicMessageCommandData data = (PublicMessageCommandData) command.getData();
                     processMessage(data.getMessage());
+                    break;
                 }
                 case UPDATE_NICKNAME: {
                     UpdateNickNameCommand data = (UpdateNickNameCommand) command.getData();
@@ -141,6 +143,7 @@ public class ClientHandler {
                     dao.updateNickName(data.getSender(), data.getNickName());
                     this.username = data.getNickName();
                     server.notifyClientsUsersListUpdated();
+                    break;
                 }
             }
         }

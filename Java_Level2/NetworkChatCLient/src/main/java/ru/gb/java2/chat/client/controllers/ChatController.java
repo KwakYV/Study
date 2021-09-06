@@ -11,6 +11,7 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import ru.gb.java2.chat.client.ClientChat;
+import ru.gb.java2.chat.client.Logging;
 import ru.gb.java2.chat.client.dialogs.Dialogs;
 import ru.gb.java2.chat.client.model.Network;
 import ru.gb.java2.chat.client.model.ReadCommandListener;
@@ -19,6 +20,7 @@ import ru.gb.java2.chat.clientserver.CommandType;
 import ru.gb.java2.chat.clientserver.commands.ClientMessageCommandData;
 import ru.gb.java2.chat.clientserver.commands.UpdateUsersListCommandData;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
@@ -39,6 +41,8 @@ public class ChatController {
 
     private String login;
     private String password;
+    private File logFile;
+    private Logging logging;
 
 
     @FXML
@@ -67,6 +71,7 @@ public class ChatController {
     }
 
     private void appendMessageToChat(String sender, String message) {
+        int from = chatHistory.getText().length();
         chatHistory.appendText(DateFormat.getDateTimeInstance().format(new Date()));
         chatHistory.appendText(System.lineSeparator());
         if (sender != null) {
@@ -76,6 +81,8 @@ public class ChatController {
         chatHistory.appendText(message);
         chatHistory.appendText(System.lineSeparator());
         chatHistory.appendText(System.lineSeparator());
+        String toLog = chatHistory.getText(from, chatHistory.getText().length());
+        logging.log(toLog);
         messageTextArea.clear();
     }
 
@@ -88,6 +95,14 @@ public class ChatController {
             } else {
                 sendMessage();
             }
+        }
+    }
+
+    public void loadHistory(){
+        logFile = new File(String.format("history_%s.txt", login));
+        logging = Logging.getInstance(logFile);
+        if (logFile.exists()){
+            chatHistory.appendText(logging.readLastLines(logFile, 10));
         }
     }
 
@@ -132,7 +147,7 @@ public class ChatController {
         String nickName = stringEditEvent.getNewValue();
         try {
             Network.getInstance().sendUpdateNickNameCommand(this.login, nickName);
-            Platform.runLater(() -> ClientChat.INSTANCE.switchToMainChatWindow(nickName));
+            Platform.runLater(() -> ClientChat.INSTANCE.getPrimaryStage().setTitle(nickName));
         } catch (IOException e) {
             Dialogs.NetworkError.UPDATE_NICKNAME_ERROR.show();
         }
