@@ -1,6 +1,6 @@
 package ru.geekbrains.lesson4;
 
-import lesson3.stack.Stack;
+import ru.geekbrains.lesson3.Stack;
 
 public class LinkedListStack<E> implements Stack<E> {
 

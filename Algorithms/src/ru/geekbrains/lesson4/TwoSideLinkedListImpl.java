@@ -22,8 +22,20 @@ public class TwoSideLinkedListImpl<E> extends SimpleLinkedListImpl<E> implements
         }
 
         last.next = newNode;
+        newNode.prev = last;
         last = newNode;
         size++;
+    }
+
+    @Override
+    public E removeLast() {
+        if (isEmpty()){
+            return null;
+        }
+
+        last = last.prev;
+        last.next = null;
+        return last.item;
     }
 
     @Override
