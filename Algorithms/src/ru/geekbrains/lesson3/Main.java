@@ -1,5 +1,7 @@
 package ru.geekbrains.lesson3;
 
+import ru.geekbrains.lesson4.LinkedDeque;
+
 public class Main {
     public static void main(String[] args) {
         /**
@@ -12,7 +14,8 @@ public class Main {
          * Deque implementation tests
          */
         System.out.println("===============Deque test===============");
-        DequeImpl deque = new DequeImpl(5);
+//        DequeImpl deque = new DequeImpl(5);
+        Deque deque = new LinkedDeque();
         System.out.println(deque.insertLeft(45));
         System.out.println(deque.insertLeft(55));
         System.out.println(deque.insertLeft(65));

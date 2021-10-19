@@ -1,23 +1,43 @@
 package ru.geekbrains.lesson4;
 
-import ru.geekbrains.lesson3.Queue;
+import ru.geekbrains.lesson3.Deque;
 
-public class LinkedQueue<E> implements Queue<E> {
+public class LinkedDeque<E> implements Deque<E> {
     private final TwoSideLinkedList<E> data;
-
-    public LinkedQueue() {
+    public LinkedDeque() {
         this.data = new TwoSideLinkedListImpl<>();
     }
 
     @Override
-    public boolean insert(E value) {
+    public boolean insertLeft(E value) {
+        data.insertFirst(value);
+        return true;
+    }
+
+    @Override
+    public boolean insertRight(E value) {
         data.insertLast(value);
         return true;
     }
 
     @Override
-    public E remove() {
+    public E removeLeft() {
         return data.removeFirst();
+    }
+
+    @Override
+    public E removeRight() {
+        return data.removeLast();
+    }
+
+    @Override
+    public boolean insert(Object value) {
+        return false;
+    }
+
+    @Override
+    public E remove() {
+        return null;
     }
 
     @Override
@@ -42,9 +62,8 @@ public class LinkedQueue<E> implements Queue<E> {
 
     @Override
     public void display() {
-    data.display();
-    }
 
+    }
     @Override
     public String toString() {
         return "LinkedQueue{" + "data=" + data + '}';

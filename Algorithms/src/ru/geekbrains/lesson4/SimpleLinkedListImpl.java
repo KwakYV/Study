@@ -10,6 +10,9 @@ public class SimpleLinkedListImpl<E> implements LinkedList<E>, Iterable<E> {
     @Override
     public void insertFirst(E value) {
         first = new Node<>(value, first);
+        if (first.next != null){
+            first.next.prev = first;
+        }
         size++;
     }
 
@@ -113,15 +116,25 @@ public class SimpleLinkedListImpl<E> implements LinkedList<E>, Iterable<E> {
     }
 
     private class LinkedListIterator implements Iterator<E> {
+        private Node<E> current_position;
+        public LinkedListIterator() {
+            current_position = first;
+        }
 
         @Override
         public boolean hasNext() {
-            return false;
+            return current_position.next != null;
         }
 
         @Override
         public E next() {
-            return null;
+            if (current_position.equals(first)){
+                current_position = current_position.next;
+                return first.item;
+            }
+            E item = current_position.next.item;
+            current_position = current_position.next;
+            return item;
         }
 
         @Override
