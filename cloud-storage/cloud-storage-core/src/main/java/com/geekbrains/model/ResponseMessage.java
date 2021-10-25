@@ -7,7 +7,6 @@ import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
-public class AuthMessage implements Serializable {
-    private String login;
-    private String password;
+public class ResponseMessage implements Serializable {
+    String message;
 }

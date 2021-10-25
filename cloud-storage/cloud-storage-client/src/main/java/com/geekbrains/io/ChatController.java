@@ -1,19 +1,29 @@
 package com.geekbrains.io;
 
 import com.geekbrains.model.AbstractMessage;
+import com.geekbrains.model.FileMessage;
 import io.netty.handler.codec.serialization.ObjectDecoderInputStream;
 import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
+import io.netty.handler.codec.bytes.ByteArrayEncoder;
+import io.netty.handler.stream.ChunkedFile;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ResourceBundle;
 
+@Slf4j
 public class ChatController implements Initializable {
 
 
@@ -21,6 +31,7 @@ public class ChatController implements Initializable {
     public TextField input;
     private ObjectDecoderInputStream dis;
     private ObjectEncoderOutputStream dos;
+    private ByteArrayEncoder bytesEnc;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -28,6 +39,8 @@ public class ChatController implements Initializable {
             Socket socket = new Socket("localhost", 8189);
             dos = new ObjectEncoderOutputStream(socket.getOutputStream());
             dis = new ObjectDecoderInputStream(socket.getInputStream());
+
+            bytesEnc = new ByteArrayEncoder();
             System.out.println("OK");
             Thread readThread = new Thread(() -> {
                 try {
@@ -47,9 +60,22 @@ public class ChatController implements Initializable {
     }
 
     public void sendMessage(ActionEvent actionEvent) throws IOException {
-        String str = input.getText();
+        String filePath = input.getText();
+        Path file = Path.of(filePath);
+        if (!Files.exists(file)){
+            log.info("Specified file does not exist on your machine");
+            return;
+        }
+        Long fileSize = Files.size(file);
+        String fileName = file.getFileName().toString();
         input.clear();
-        dos.writeObject(new AbstractMessage(str));
+
+        InputStream fileStream = new FileInputStream(filePath);
+        FileMessage message = new FileMessage(fileName, filePath, fileSize, fileStream.readAllBytes());
+
+        dos.writeObject(message);
+        fileStream.close();
         dos.flush();
+
     }
 }
