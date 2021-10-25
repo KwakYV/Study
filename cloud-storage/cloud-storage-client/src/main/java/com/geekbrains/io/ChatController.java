@@ -1,35 +1,39 @@
 package com.geekbrains.io;
 
+import com.geekbrains.model.AbstractMessage;
+import io.netty.handler.codec.serialization.ObjectDecoderInputStream;
+import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-
 public class ChatController implements Initializable {
+
 
     public ListView<String> listView;
     public TextField input;
-    private DataInputStream dis;
-    private DataOutputStream dos;
+    private ObjectDecoderInputStream dis;
+    private ObjectEncoderOutputStream dos;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
             Socket socket = new Socket("localhost", 8189);
-            dis = new DataInputStream(socket.getInputStream());
-            dos = new DataOutputStream(socket.getOutputStream());
+            dos = new ObjectEncoderOutputStream(socket.getOutputStream());
+            dis = new ObjectDecoderInputStream(socket.getInputStream());
+            System.out.println("OK");
             Thread readThread = new Thread(() -> {
                 try {
                     while (true) {
-                        String message = dis.readUTF();
-                        Platform.runLater(() -> listView.getItems().add(message));
+                        AbstractMessage message = (AbstractMessage) dis.readObject();
+                        Platform.runLater(() -> listView.getItems().add(message.getMessage()));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -43,24 +47,9 @@ public class ChatController implements Initializable {
     }
 
     public void sendMessage(ActionEvent actionEvent) throws IOException {
-        StringBuilder localPath = new StringBuilder(input.getText());
-        File file = new File(localPath.toString());
-        Long fileSize = file.length();
-        byte[] buffer = new byte[8192];
-        localPath.append("@SEP@").append(fileSize.toString());
-        localPath.append("@SEP@").append(file.getName());
-        /**
-         * Send to server path of the file
-         */
-        dos.writeUTF(localPath.toString());
-
-        InputStream fileStream = new FileInputStream(file);
-        int count;
-        while ((count = fileStream.read(buffer)) > 0){
-            dos.write(buffer, 0, count);
-        }
-        dos.flush();
-        fileStream.close();
+        String str = input.getText();
         input.clear();
+        dos.writeObject(new AbstractMessage(str));
+        dos.flush();
     }
 }
