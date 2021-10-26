@@ -10,6 +10,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.codec.serialization.*;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -34,9 +35,12 @@ public class Server {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(
+//                                    new ChunkedWriteHandler(),
+//                                    new ChunkedFileHandler(),
                                     new ObjectEncoder(),
                                     new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
                                     new FileMessageHandler(root.resolve("username"))
+
                             );
                         }
                     });

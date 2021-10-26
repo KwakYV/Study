@@ -1,13 +1,17 @@
 package com.geekbrains.netty;
 
-import com.geekbrains.model.AbstractMessage;
 import com.geekbrains.model.FileMessage;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -27,13 +31,16 @@ public class FileMessageHandler extends SimpleChannelInboundHandler<FileMessage>
         log.info("File path - " + fileMessage.getFilePath());
         log.info("File size - " + fileMessage.getFileSize());
         Path file = userDir.resolve(fileMessage.getFileName());
+
         if (!Files.exists(file)){
             Files.createFile(file);
         }
-        FileOutputStream outStream = new FileOutputStream(file.toFile());
-        outStream.write(fileMessage.getBytes());
-        outStream.flush();
-        outStream.close();
+
+        RandomAccessFile raf = new RandomAccessFile(file.toFile(), "rw");
+        raf.seek(raf.length());
+        raf.write(fileMessage.getBytes());
+        raf.close();
+
     }
 
     @Override
