@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 @Slf4j
@@ -86,24 +87,20 @@ public class ChatController implements Initializable {
         String fileName = file.getFileName().toString();
         input.clear();
 
-//        InputStream fileStream = new FileInputStream(filePath);
-        ByteBuffer buffer = ByteBuffer.allocate(CHUNK_SIZE);
         RandomAccessFile raf = new RandomAccessFile(file.toFile(), "r");
         FileChannel fileChannel = raf.getChannel();
-//        ChunkedFile fileChunked = new ChunkedFile(file.toFile());
-        fileChannel.position();
-        while (fileChannel.position() != fileChannel.size()){
-            fileChannel.read(buffer);
 
-            FileMessage message = new FileMessage(fileName, filePath, fileSize, buffer.compact().array());
+        int bufferSize = 1024;
+        if (bufferSize > fileChannel.size()){
+            bufferSize = (int) fileChannel.size();
+        }
+
+        ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+        while (fileChannel.read(buffer) > 0){
+            FileMessage message = new FileMessage(fileName, filePath, fileSize, Arrays.copyOfRange(buffer.array(), 0, buffer.position()));
+            buffer.clear();
             channel.writeAndFlush(message);
         }
         log.info("File has been send");
-
-//        dos.writeObject(message);
-//        fileStream.close();
-//        dos.flush();
-//        channel.writeAndFlush(fileChunked);
-
     }
 }
