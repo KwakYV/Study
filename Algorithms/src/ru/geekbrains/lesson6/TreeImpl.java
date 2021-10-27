@@ -4,10 +4,21 @@ import java.util.Stack;
 
 public class TreeImpl<E extends Comparable<? super E>> implements Tree<E> {
 
+    public Node<E> getRoot() {
+        return root;
+    }
+
     private Node<E> root;
     private int size;
 
+    private int levelLimit;
+
+    public void setLevelLimit(int levelLimit) {
+        this.levelLimit = levelLimit;
+    }
+
     private class NodeAndParent {
+
         private Node<E> current;
         private Node<E> parent;
         private int level;
@@ -59,14 +70,21 @@ public class TreeImpl<E extends Comparable<? super E>> implements Tree<E> {
 
         if (parent == null) {
             root = node;
-        } else if (parent.isLeftChild(value)) {
-            parent.setLeftChild(node);
-        } else {
-            parent.setRightChild(node);
+            node.setLevel(1);
+            return true;
+        } else
+        if (parent.getLevel() + 1 < levelLimit){
+            node.setLevel(parent.getLevel() + 1);
+            if (parent.isLeftChild(value)) {
+                parent.setLeftChild(node);
+            } else {
+                parent.setRightChild(node);
+            }
+            size++;
+            return true;
         }
-        size++;
 
-        return true;
+        return false;
     }
 
     @Override
@@ -204,10 +222,10 @@ public class TreeImpl<E extends Comparable<? super E>> implements Tree<E> {
     @Override
     public void traverse(TraversMode mode) {
         switch (mode) {
-            case PRE_ORDER -> preOrder(root); //прямой обход
-            case IN_ORDER -> inOrder(root); //центрированный обход
-            case POST_ORDER -> postOrder(root); //обратный порядок
-            default -> throw new RuntimeException("Unknown travers mode: " + mode);
+            case PRE_ORDER: preOrder(root); break; //прямой обход
+            case IN_ORDER: inOrder(root); break;//центрированный обход
+            case POST_ORDER: postOrder(root); break;//обратный порядок
+            default: throw new RuntimeException("Unknown travers mode: " + mode);
         }
         System.out.println();
     }
