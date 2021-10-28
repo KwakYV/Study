@@ -17,7 +17,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <project.main.class>com.geekbrains.io.App</project.main.class>
+        <project.main.class>com.geekbrains.io.CloudStorageClient</project.main.class>
     </properties>
 
 
@@ -57,7 +57,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.geekbrains.io.App</mainClass>
+                            <mainClass>com.geekbrains.io.CloudStorageClient</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -78,7 +78,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.geekbrains.io.App</mainClass>
+                            <mainClass>com.geekbrains.io.CloudStorageClient</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

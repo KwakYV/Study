@@ -1,13 +1,16 @@
 package com.geekbrains.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
-@AllArgsConstructor
-public class AuthMessage implements Serializable {
+public class AuthMessage extends AbstractMessage {
     private String login;
     private String password;
+
+
+    public AuthMessage(String login, String password) {
+        this.login = login;
+        this.password = password;
+        setType(CommandType.AUTH_CMD);
+    }
 }

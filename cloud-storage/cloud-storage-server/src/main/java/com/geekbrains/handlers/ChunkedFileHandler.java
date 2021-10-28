@@ -1,4 +1,4 @@
-package com.geekbrains.netty;
+package com.geekbrains.handlers;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;

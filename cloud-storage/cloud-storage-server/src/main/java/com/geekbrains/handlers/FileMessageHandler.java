@@ -1,4 +1,4 @@
-package com.geekbrains.netty;
+package com.geekbrains.handlers;
 
 import com.geekbrains.model.FileMessage;
 import io.netty.buffer.ByteBuf;

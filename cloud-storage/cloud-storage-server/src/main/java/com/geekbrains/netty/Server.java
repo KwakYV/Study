@@ -1,22 +1,18 @@
 package com.geekbrains.netty;
 
+import com.geekbrains.handlers.AuthMessageHandler;
+import com.geekbrains.handlers.FileMessageHandler;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.ByteToMessageDecoder;
-import io.netty.handler.codec.bytes.ByteArrayDecoder;
-import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.codec.serialization.*;
-import io.netty.handler.stream.ChunkedWriteHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 @Slf4j
 public class Server {
@@ -39,6 +35,7 @@ public class Server {
 //                                    new ChunkedFileHandler(),
                                     new ObjectEncoder(),
                                     new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+                                    new AuthMessageHandler(),
                                     new FileMessageHandler(root.resolve("username"))
 
                             );

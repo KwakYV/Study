@@ -1,6 +1,7 @@
-package com.geekbrains.io;
+package com.geekbrains.io.controller;
 
 import com.geekbrains.handlers.ResponseHandler;
+import com.geekbrains.io.network.Server;
 import com.geekbrains.model.FileMessage;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -30,50 +31,21 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 
 @Slf4j
-public class ChatController implements Initializable {
+public class StorageController implements Initializable {
 
 
     public ListView<String> listView;
     public TextField input;
-    private ObjectDecoderInputStream dis;
-    private ObjectEncoderOutputStream dos;
-    private ByteArrayEncoder bytesEnc;
-
-    private static final String HOST = "localhost";
-    private static int PORT = 8189;
-    private SocketChannel channel;
-    private static int CHUNK_SIZE = 8192;
+    private Server server;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Thread readThread = new Thread(() -> {
-            EventLoopGroup workerGroup = new NioEventLoopGroup();
-            try {
-                Bootstrap bootstrap = new Bootstrap();
-                bootstrap.group(workerGroup)
-                        .channel(NioSocketChannel.class)
-                        .handler(new ChannelInitializer<SocketChannel>() {
-                            @Override
-                            protected void initChannel(SocketChannel socketChannel) throws Exception {
-                                channel = socketChannel;
-                                socketChannel.pipeline().addLast(
-//                                        new ChunkedWriteHandler(),
-                                        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
-                                        new ObjectEncoder(),
-                                        new ResponseHandler()
-                                );
-                            }
-                        });
-                ChannelFuture future = bootstrap.connect(HOST, PORT).sync();
-                future.channel().closeFuture().await();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                workerGroup.shutdownGracefully();
-            }
-        });
-        readThread.setDaemon(true);
-        readThread.start();
+        server = Server.getInstance();
+        try{
+            server.connect();
+        } catch (Exception e){
+            log.error("Failed to connect on server", e);
+        }
     }
 
     public void sendMessage(ActionEvent actionEvent) throws IOException {
@@ -99,8 +71,11 @@ public class ChatController implements Initializable {
         while (fileChannel.read(buffer) > 0){
             FileMessage message = new FileMessage(fileName, filePath, fileSize, Arrays.copyOfRange(buffer.array(), 0, buffer.position()));
             buffer.clear();
-            channel.writeAndFlush(message);
+            server.getChannel().writeAndFlush(message);
         }
         log.info("File has been send");
+    }
+
+    public void initMessageHandler() {
     }
 }
