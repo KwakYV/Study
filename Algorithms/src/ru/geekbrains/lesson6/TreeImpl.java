@@ -204,10 +204,10 @@ public class TreeImpl<E extends Comparable<? super E>> implements Tree<E> {
     @Override
     public void traverse(TraversMode mode) {
         switch (mode) {
-            case PRE_ORDER -> preOrder(root); //прямой обход
-            case IN_ORDER -> inOrder(root); //центрированный обход
-            case POST_ORDER -> postOrder(root); //обратный порядок
-            default -> throw new RuntimeException("Unknown travers mode: " + mode);
+            case PRE_ORDER: preOrder(root); break;//прямой обход
+            case IN_ORDER: inOrder(root); break;//центрированный обход
+            case POST_ORDER: postOrder(root); break;//обратный порядок
+            default: throw new RuntimeException("Unknown travers mode: " + mode);
         }
         System.out.println();
     }
