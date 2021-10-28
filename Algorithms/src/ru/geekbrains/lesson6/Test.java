@@ -5,6 +5,7 @@ public class Test {
 
         Tree<Integer> tree = new TreeImpl<>();
 
+
         tree.add(60);
         tree.add(50);
         tree.add(66);
@@ -34,9 +35,9 @@ public class Test {
 
         tree.display();
 
-        tree.traverse(Tree.TraversMode.IN_ORDER);
-        tree.traverse(Tree.TraversMode.PRE_ORDER);
-        tree.traverse(Tree.TraversMode.POST_ORDER);
+//        tree.traverse(Tree.TraversMode.IN_ORDER);
+//        tree.traverse(Tree.TraversMode.PRE_ORDER);
+//        tree.traverse(Tree.TraversMode.POST_ORDER);
 
 
 
