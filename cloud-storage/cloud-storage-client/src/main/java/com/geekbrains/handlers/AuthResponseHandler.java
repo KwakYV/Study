@@ -12,7 +12,8 @@ public class AuthResponseHandler  extends SimpleChannelInboundHandler<ResponseMe
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ResponseMessage responseMessage) throws Exception {
         if (responseMessage.getType().equals(CommandType.AUTH_OK_CMD)){
-            Platform.runLater(() -> CloudStorageClient.INSTANCE.switchToMainChatWindow(responseMessage.getUser()));
+            Platform.runLater(() -> CloudStorageClient.INSTANCE.switchToMainChatWindow(responseMessage.getUser(),
+                    responseMessage.getHierarchy()));
         }
 
         if (responseMessage.getType().equals(CommandType.AUTH_FAIL_CMD)){

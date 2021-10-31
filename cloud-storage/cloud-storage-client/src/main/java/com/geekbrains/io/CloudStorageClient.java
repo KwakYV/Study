@@ -7,8 +7,12 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TreeItem;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class CloudStorageClient extends Application {
     public static  CloudStorageClient INSTANCE;
@@ -59,7 +63,7 @@ public class CloudStorageClient extends Application {
         });
     }
 
-    private void initStorageWindow() throws Exception{
+    public void initStorageWindow() throws Exception{
         storageWindowLoader = new FXMLLoader();
         storageWindowLoader.setLocation(CloudStorageClient.class.getResource(STORAGE_WINDOW_FXML));
 
@@ -89,9 +93,9 @@ public class CloudStorageClient extends Application {
         return storageWindowLoader.getController();
     }
 
-    public void switchToMainChatWindow(String username) {
+    public void switchToMainChatWindow(String username, HashMap<String, List<String>> hierarchy) {
         getPrimaryStage().setTitle(username);
-        getStorageController().initMessageHandler();
+        getStorageController().initMessageHandler(hierarchy);
         getAuthController().close();
         getAuthStage().close();
     }

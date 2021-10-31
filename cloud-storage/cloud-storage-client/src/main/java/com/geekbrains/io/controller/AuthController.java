@@ -1,6 +1,7 @@
 package com.geekbrains.io.controller;
 
 import com.geekbrains.handlers.AuthResponseHandler;
+import com.geekbrains.io.CloudStorageClient;
 import com.geekbrains.io.dialogs.Dialogs;
 import com.geekbrains.io.network.Server;
 import com.geekbrains.model.AuthMessage;
