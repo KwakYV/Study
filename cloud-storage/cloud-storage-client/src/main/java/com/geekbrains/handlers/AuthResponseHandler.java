@@ -9,15 +9,20 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import javafx.application.Platform;
 
 public class AuthResponseHandler  extends SimpleChannelInboundHandler<ResponseMessage> {
+    private Callback callback;
+    public AuthResponseHandler(Callback callback){
+        this.callback = callback;
+    }
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ResponseMessage responseMessage) throws Exception {
-        if (responseMessage.getType().equals(CommandType.AUTH_OK_CMD)){
-            Platform.runLater(() -> CloudStorageClient.INSTANCE.switchToMainChatWindow(responseMessage.getUser(),
-                    responseMessage.getHierarchy()));
-        }
-
-        if (responseMessage.getType().equals(CommandType.AUTH_FAIL_CMD)){
-            Platform.runLater(Dialogs.AuthError.INVALID_CREDENTIALS::show);
-        }
+        callback.callback(responseMessage);
+//        if (responseMessage.getType().equals(CommandType.AUTH_OK_CMD)){
+//            Platform.runLater(() -> CloudStorageClient.INSTANCE.switchToMainChatWindow(responseMessage.getUser(),
+//                    responseMessage.getHierarchy()));
+//        }
+//
+//        if (responseMessage.getType().equals(CommandType.AUTH_FAIL_CMD)){
+//            Platform.runLater(Dialogs.AuthError.INVALID_CREDENTIALS::show);
+//        }
     }
 }

@@ -27,6 +27,7 @@ public class AuthMessageHandler extends SimpleChannelInboundHandler<AuthMessage>
         channelHandlerContext.writeAndFlush(new ResponseMessage("User is authorized",
                 authMessage.getLogin(),
                 CommandType.AUTH_OK_CMD,
-                ServerUtils.hierarchyMap(userDir)));
+                ServerUtils.hierarchyMap(userDir),
+                null));
     }
 }

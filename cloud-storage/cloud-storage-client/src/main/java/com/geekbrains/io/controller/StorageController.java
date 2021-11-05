@@ -1,8 +1,11 @@
 package com.geekbrains.io.controller;
 
 import com.geekbrains.io.CloudStorageClient;
+import com.geekbrains.io.dialogs.Dialogs;
 import com.geekbrains.io.network.Server;
+import com.geekbrains.model.CommandType;
 import com.geekbrains.model.FileMessage;
+import com.geekbrains.model.ResponseMessage;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -44,12 +47,104 @@ public class StorageController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        server = Server.getInstance();
+        server = Server.getInstance(this::processMessage);
         try{
-            server.connect();
+            if (!server.isConnected()){
+                server.connect();
+            }
         } catch (Exception e){
             log.error("Failed to connect on server", e);
         }
+    }
+
+    private void processMessage(ResponseMessage message) throws IOException {
+        runLater(() -> displayDir(message.getHierarchy()));
+        if (message.getType().equals(CommandType.AUTH_OK_CMD)){
+            runLater(() -> {
+                try {
+                    CloudStorageClient.INSTANCE.switchToMainChatWindow(message.getUser(),
+                            message.getHierarchy());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+        if (message.getType().equals(CommandType.AUTH_FAIL_CMD)){
+            runLater(Dialogs.AuthError.INVALID_CREDENTIALS::show);
+        }
+
+        if (message.getType().equals(CommandType.FILE_UPLOAD_CMD)){
+            log.info("File upload - " + message.getMessage());
+        }
+
+        if (message.getType().equals(CommandType.FILE_DOWNLOAD_CMD)){
+            log.info("File Download cmd");
+            downloadFile(message.getContent());
+        }
+
+    }
+
+    private void downloadFile(byte[] content) throws IOException {
+        TreeItem<String> item = listView.getSelectionModel().getSelectedItem();
+        if (item.getChildren().size() > 0) {
+            log.error("Choose file name instead of directory");
+            return;
+        } else {
+            String fileName = item.getValue();
+            Path filePath = CloudStorageClient.INSTANCE.getClientDir().resolve(fileName);
+
+            if (!Files.exists(filePath)){
+                Files.createDirectory(filePath);
+            }
+
+            RandomAccessFile raf = new RandomAccessFile(filePath.toFile(), "rw");
+            raf.seek(raf.length());
+            raf.write(content);
+            raf.close();
+        }
+    }
+
+    /**
+     * Construct directory structure
+     * @param hierarchy
+     */
+    private void displayDir(HashMap<String, List<String>> hierarchy) {
+        if (hierarchy.size() > 0) {
+                root = new TreeItem<>(hierarchy.get("root").get(0));
+                for (String key : hierarchy.keySet()) {
+                    if (!key.equals("root")){
+                        // If current key is root then just elements to root node
+                        if (key.equals(root.getValue())){
+                            for (String value : hierarchy.get(key)) {
+                                root.getChildren().add(new TreeItem<>(value));
+                            }
+                        }else {
+                            //Check if node already created and added to root node
+                            TreeItem<String> child = getItem(root, key);
+                            for (String value : hierarchy.get(key)) {
+                                child.getChildren().add(new TreeItem<>(value));
+                            }
+                        }
+                    }
+                }
+                listView.setRoot(root);
+            }
+    }
+
+    private TreeItem getItem(TreeItem<String> item, String value){
+        if (item != null && item.getValue().equals(value)){
+            return item;
+        }
+
+        for (TreeItem<String> child: item.getChildren()){
+            TreeItem<String> tmp = getItem(child, value);
+            if (tmp != null){
+                return tmp;
+            }
+
+        }
+        return null;
     }
 
     @FXML
@@ -74,49 +169,12 @@ public class StorageController implements Initializable {
 
         ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
         while (fileChannel.read(buffer) > 0){
-            FileMessage message = new FileMessage(fileName, filePath, fileSize, Arrays.copyOfRange(buffer.array(), 0, buffer.position()));
+            FileMessage message = new FileMessage(CommandType.FILE_UPLOAD_CMD, fileName, filePath, fileSize, Arrays.copyOfRange(buffer.array(), 0, buffer.position()));
             buffer.clear();
             server.getChannel().writeAndFlush(message);
         }
-        input.setText("File has been send");
         log.info("File has been send");
     }
-
-    public void initMessageHandler(HashMap<String, List<String>> hierarchy) {
-        this.filesMap = hierarchy;
-        Platform.runLater(() -> input.setText("initMessageHandler"));
-        input.setText("Without platform.runlater");
-        System.out.println(input.getText());
-//        Platform.runLater(() -> {
-//            if (hierarchy.size() > 0) {
-//                System.out.println("We are in initMessage and size is not 0");
-//                root = new TreeItem<>(hierarchy.get("root").get(0));
-//                for (String key : hierarchy.keySet()) {
-//                    if (!key.equals("root")){
-//                        // If current key is root then just elements to root node
-//                        if (key.equals(root.getValue())){
-//                            for (String value : hierarchy.get(key)) {
-//                                root.getChildren().add(new TreeItem<>(value));
-//                            }
-//                        }else {
-//                            //Check if node already created and added to root node
-//                            if (root.getChildren().contains(key)) {
-//                                TreeItem<String> child = root.getChildren().get(root.getChildren().indexOf(key));
-//                                for (String value : hierarchy.get(key)) {
-//                                    child.getChildren().add(new TreeItem<>(value));
-//                                }
-//                            } else {
-//                                System.out.println("check");
-//                            }
-//                        }
-//                    }
-//                }
-//                System.out.println("check if root is null - " + (root == null));
-//                listView.setRoot(root);
-//            }
-//        });
-    }
-
 
 
     @FXML
@@ -133,15 +191,12 @@ public class StorageController implements Initializable {
 
     }
 
-    public TreeView<String> getListView() {
-        return listView;
-    }
-
     @FXML
     public void download(ActionEvent actionEvent) {
-        System.out.println(root == null);
-        System.out.println(input.getText());
-        listView.setRoot(root);
+        String path = listView.getSelectionModel().getSelectedItem().getValue();
+        server.getChannel().writeAndFlush(new FileMessage(CommandType.FILE_DOWNLOAD_CMD,
+                "",
+                path, 0L, null));
     }
 
 }

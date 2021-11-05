@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 @Data
 @AllArgsConstructor
 public class FileMessage implements Serializable {
+    private CommandType commandType;
     private String fileName;
     private String filePath;
     private Long fileSize;

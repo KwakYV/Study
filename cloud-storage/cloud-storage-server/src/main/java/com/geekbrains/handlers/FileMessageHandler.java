@@ -1,6 +1,9 @@
 package com.geekbrains.handlers;
 
+import com.geekbrains.model.CommandType;
 import com.geekbrains.model.FileMessage;
+import com.geekbrains.model.ResponseMessage;
+import com.geekbrains.util.ServerUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -40,7 +43,12 @@ public class FileMessageHandler extends SimpleChannelInboundHandler<FileMessage>
         raf.seek(raf.length());
         raf.write(fileMessage.getBytes());
         raf.close();
-        // TODO - Send ResponseMesage to Client
+
+        channelHandlerContext.writeAndFlush(new ResponseMessage("File has been saved",
+                "user",
+                CommandType.FILE_UPLOAD_CMD,
+                ServerUtils.hierarchyMap(userDir),
+                null));
     }
 
     @Override

@@ -4,13 +4,19 @@ import com.geekbrains.io.controller.AuthController;
 import com.geekbrains.io.controller.StorageController;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,6 +30,8 @@ public class CloudStorageClient extends Application {
     private Stage authStage;
     private FXMLLoader storageWindowLoader;
     private FXMLLoader authWindowLoader;
+
+    Path clientDir;
 
 
     @Override
@@ -41,6 +49,7 @@ public class CloudStorageClient extends Application {
     }
 
     private void initWindows() throws Exception{
+        initClientDir();
         initStorageWindow();
         initAuthWindow();
         getPrimaryStage().show();
@@ -77,6 +86,17 @@ public class CloudStorageClient extends Application {
 //        setStageForSecondScreen(primaryStage);
     }
 
+    public void initClientDir() throws IOException {
+        clientDir = Path.of("default");
+        if (!Files.exists(clientDir)){
+            Files.createDirectory(clientDir);
+        }
+    }
+
+    public Path getClientDir(){
+        return clientDir;
+    }
+
     public Stage getPrimaryStage() {
         return primaryStage;
     }
@@ -93,10 +113,8 @@ public class CloudStorageClient extends Application {
         return storageWindowLoader.getController();
     }
 
-    public void switchToMainChatWindow(String username, HashMap<String, List<String>> hierarchy) {
+    public void switchToMainChatWindow(String username, HashMap<String, List<String>> hierarchy) throws IOException {
         getPrimaryStage().setTitle(username);
-        getStorageController().initMessageHandler(hierarchy);
-        getAuthController().close();
         getAuthStage().close();
     }
 
