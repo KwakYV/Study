@@ -5,6 +5,9 @@ import java.util.Objects;
 public class Vertex {
     private final String label;
     private boolean isVisited;
+    private boolean isMarked;
+    private int markValue;
+    private boolean isTarget;
 
     public boolean isVisited() {
         return isVisited;
@@ -16,6 +19,7 @@ public class Vertex {
 
     public Vertex(String label) {
         this.label = label;
+        this.markValue = Integer.MAX_VALUE;
     }
 
     public String getLabel() {
@@ -42,5 +46,29 @@ public class Vertex {
     @Override
     public String toString() {
         return "Vertex{" + "label='" + label + '\'' + '}';
+    }
+
+    public void setMarked(boolean marked) {
+        isMarked = marked;
+    }
+
+    public boolean isMarked() {
+        return isMarked;
+    }
+
+    public int getMarkValue() {
+        return markValue;
+    }
+
+    public void setMarkValue(int markValue) {
+        this.markValue = markValue;
+    }
+
+    public void setTarget(boolean target) {
+        isTarget = target;
+    }
+
+    public boolean isTarget() {
+        return isTarget;
     }
 }

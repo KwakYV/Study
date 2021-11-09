@@ -3,7 +3,7 @@ package ru.geekbrains.lesson7;
 public class Main {
     public static void main(String[] args) {
 //        testGraph();
-        testDfs();
+//        testDfs();
         testBfs();
     }
 
@@ -42,22 +42,36 @@ public class Main {
     }
 
     private static void testBfs() {
-        Graph graph = new GraphImpl(8);
-        graph.addVertex("A");
-        graph.addVertex("B");
-        graph.addVertex("C");
-        graph.addVertex("D");
-        graph.addVertex("E");
-        graph.addVertex("F");
-        graph.addVertex("G");
-        graph.addVertex("H");
+        Graph graph = new GraphImpl(10);
+        graph.addVertex("Москва");
+        graph.addVertex("Тула");
+        graph.addVertex("Липецк");
+        graph.addVertex("Рязань");
+        graph.addVertex("Тамбов");
+        graph.addVertex("Воронеж", true);
+        graph.addVertex("Саратов");
+        graph.addVertex("Калуга");
+        graph.addVertex("Орел");
+        graph.addVertex("Курск");
 
-        graph.addEdge("A", "B", "C", "D");
-        graph.addEdge("B", "E");
-        graph.addEdge("E", "H");
-        graph.addEdge("C", "F");
-        graph.addEdge("D", "G");
+        graph.addEdge("Москва", "Тула", 4);
+        graph.addEdge("Москва", "Рязань", 7);
+        graph.addEdge("Москва", "Калуга", 6);
 
-        graph.bfs("A");
+        graph.addEdge("Тула", "Липецк", 5);
+        graph.addEdge("Рязань", "Тамбов", 8);
+        graph.addEdge("Калуга", "Орел", 3);
+
+        graph.addEdge("Липецк", "Воронеж", 20);
+        graph.addEdge("Тамбов", "Саратов", 9);
+        graph.addEdge("Орел", "Курск", 2);
+
+        graph.addEdge("Саратов", "Воронеж", 10);
+        graph.addEdge("Курск", "Воронеж", 8);
+
+//        graph.bfs("Москва");
+        graph.shortPath("Москва");
+        System.out.println(String.format("The shortest path to Воронеж is %d", graph.getVertex("Воронеж").getMarkValue()));
+
     }
 }
