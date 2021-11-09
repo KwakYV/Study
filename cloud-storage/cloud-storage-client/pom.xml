@@ -17,7 +17,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <project.main.class>com.geekbrains.io.App</project.main.class>
+        <project.main.class>com.geekbrains.io.CloudStorageClient</project.main.class>
     </properties>
 
 
@@ -34,6 +34,17 @@
             <version>15.0.1</version>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>org.openjfx</groupId>-->
+<!--            <artifactId>javafx-base</artifactId>-->
+<!--            <version>15.0.1</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.openjfx</groupId>-->
+<!--            <artifactId>javafx-graphics</artifactId>-->
+<!--            <version>15.0.1</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.geekbrains</groupId>
@@ -57,7 +68,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.geekbrains.io.App</mainClass>
+                            <mainClass>com.geekbrains.io.CloudStorageClient</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -78,7 +89,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.geekbrains.io.App</mainClass>
+                            <mainClass>com.geekbrains.io.CloudStorageClient</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -91,18 +102,18 @@
                 <configuration>
                     <mainClass>${project.main.class}</mainClass>
                 </configuration>
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        &lt;!&ndash;  Configuration for debugging  &ndash;&gt;-->
-<!--                        <id>debug</id>-->
-<!--                        <configuration>-->
-<!--                            <options>-->
-<!--                                <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</option>-->
-<!--                            </options>-->
-<!--                            <mainClass>${project.main.class}</mainClass>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
+                <executions>
+                    <execution>
+                        <!--  Configuration for debugging  -->
+                        <id>debug</id>
+                        <configuration>
+                            <options>
+                                <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</option>
+                            </options>
+                            <mainClass>${project.main.class}</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>

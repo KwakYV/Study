@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="538.0" prefWidth="448.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.geekbrains.io.controller.StorageController">
+   <TreeView fx:id="listView" layoutX="14.0" layoutY="14.0"  prefHeight="458.0" prefWidth="318.0" />
+   <TextField fx:id="input" layoutX="16.0" layoutY="489.0" onAction="#sendMessage" prefHeight="36.0" prefWidth="312.0" />
+   <Button layoutX="340.0" layoutY="489.0" mnemonicParsing="false" onAction="#chooseFile" prefHeight="36.0" prefWidth="94.0" text="Upload" />
+   <Button fx:id="download" layoutX="340.0" layoutY="14.0" mnemonicParsing="false" onAction="#download" prefHeight="36.0" prefWidth="94.0" text="Download" />
+   <Button layoutX="340.0" layoutY="56.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="94.0" text="Delete" />
+   <Button layoutX="340.0" layoutY="98.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="94.0" text="Create &#10;Directory" />
+</AnchorPane>
