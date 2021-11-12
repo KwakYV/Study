@@ -37,7 +37,7 @@ public class Server {
                                     new ObjectEncoder(),
                                     new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
                                     new AuthMessageHandler(),
-                                    new FileMessageHandler(root.resolve("user"))
+                                    new FileMessageHandler()
 
                             );
                         }

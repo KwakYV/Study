@@ -4,12 +4,12 @@ import lombok.Data;
 
 @Data
 public class AuthMessage extends AbstractMessage {
-    private String login;
     private String password;
 
 
     public AuthMessage(String login, String password) {
-        this.login = login;
+        super();
+        super.setLogin(login);
         this.password = password;
         setType(CommandType.AUTH_CMD);
     }

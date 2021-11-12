@@ -44,6 +44,7 @@ public class StorageController implements Initializable {
 
     private TreeItem<String> root;
     private HashMap<String, List<String>> filesMap;
+    private String login;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -59,7 +60,9 @@ public class StorageController implements Initializable {
 
     private void processMessage(ResponseMessage message) throws IOException {
         runLater(() -> displayDir(message.getHierarchy()));
+
         if (message.getType().equals(CommandType.AUTH_OK_CMD)){
+            this.login = message.getUser();
             runLater(() -> {
                 try {
                     CloudStorageClient.INSTANCE.switchToMainChatWindow(message.getUser(),
@@ -169,7 +172,9 @@ public class StorageController implements Initializable {
 
         ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
         while (fileChannel.read(buffer) > 0){
-            FileMessage message = new FileMessage(CommandType.FILE_UPLOAD_CMD, fileName, filePath, fileSize, Arrays.copyOfRange(buffer.array(), 0, buffer.position()));
+            FileMessage message = new FileMessage(fileName, filePath, fileSize, Arrays.copyOfRange(buffer.array(), 0, buffer.position()));
+            message.setType(CommandType.FILE_UPLOAD_CMD);
+            message.setLogin(this.login);
             buffer.clear();
             server.getChannel().writeAndFlush(message);
         }
@@ -194,9 +199,12 @@ public class StorageController implements Initializable {
     @FXML
     public void download(ActionEvent actionEvent) {
         String path = listView.getSelectionModel().getSelectedItem().getValue();
-        server.getChannel().writeAndFlush(new FileMessage(CommandType.FILE_DOWNLOAD_CMD,
+        FileMessage message = new FileMessage(
                 "",
-                path, 0L, null));
+                path, 0L, null);
+        message.setType(CommandType.FILE_DOWNLOAD_CMD);
+        message.setLogin(this.login);
+        server.getChannel().writeAndFlush(message);
     }
 
 }

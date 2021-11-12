@@ -11,4 +11,5 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class AbstractMessage implements Serializable {
     private CommandType type;
+    private String login;
 }
