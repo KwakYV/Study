@@ -1,6 +1,7 @@
 package com.geekbrains.io.network;
 
 import com.geekbrains.handlers.AuthResponseHandler;
+import com.geekbrains.handlers.Callback;
 import com.geekbrains.handlers.ResponseHandler;
 import com.geekbrains.model.AuthMessage;
 import io.netty.bootstrap.Bootstrap;
@@ -27,21 +28,23 @@ public class Server {
     private SocketChannel channel;
 
     private boolean isConnected;
+    private Callback callback;
 
-    public static Server getInstance(){
+    public static Server getInstance(Callback callback){
         if (INSTANCE == null){
-            INSTANCE =  new Server();
+            INSTANCE =  new Server(callback);
         }
         return INSTANCE;
     }
 
-    private Server(String host, int port){
+    private Server(String host, int port, Callback callback){
         this.host = host;
         this.port = port;
+        this.callback = callback;
     }
 
-    private Server(){
-        this(SERVER_HOST, SERVER_PORT);
+    private Server(Callback callback){
+        this(SERVER_HOST, SERVER_PORT, callback);
     }
 
     public boolean isConnected() {
@@ -63,7 +66,7 @@ public class Server {
 //                                        new ChunkedWriteHandler(),
                                         new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
                                         new ObjectEncoder(),
-                                        new AuthResponseHandler()
+                                        new AuthResponseHandler(callback)
                                 );
                             }
                         });

@@ -13,12 +13,14 @@ public class ResponseMessage implements Serializable {
     String user;
     CommandType type;
     HashMap<String, List<String>> hierarchy;
+    byte[] content;
     public ResponseMessage(String message, String user, CommandType type,
-                           HashMap<String, List<String>> hierarchy){
+                           HashMap<String, List<String>> hierarchy, byte[] content){
         this.message = message;
         this.type = type;
         this.user = user;
         this.hierarchy = hierarchy;
+        this.content = content;
     }
 
 }

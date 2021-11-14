@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 
 @Data
 @AllArgsConstructor
-public class FileMessage implements Serializable {
+public class FileMessage extends AbstractMessage implements Serializable {
     private String fileName;
     private String filePath;
     private Long fileSize;

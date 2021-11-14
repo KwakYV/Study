@@ -5,6 +5,8 @@ import com.geekbrains.io.CloudStorageClient;
 import com.geekbrains.io.dialogs.Dialogs;
 import com.geekbrains.io.network.Server;
 import com.geekbrains.model.AuthMessage;
+import com.geekbrains.model.CommandType;
+import com.geekbrains.model.ResponseMessage;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,11 +45,15 @@ public class AuthController {
 
         try {
             AuthMessage message = new AuthMessage(login, password);
-            Server.getInstance().sendAuthMessage(message);
+            Server.getInstance(this::processMessage).sendAuthMessage(message);
         } catch (Exception e) {
             Dialogs.NetworkError.SEND_MESSAGE.show();
             e.printStackTrace();
         }
+    }
+
+    private void processMessage(ResponseMessage message) {
+
     }
 
     private boolean connectToServer() {
@@ -56,15 +62,11 @@ public class AuthController {
     }
 
     private Server getServer() {
-        return Server.getInstance();
+        return Server.getInstance(this::processMessage);
     }
 
 
     public void initMessageHandler() {
-        getServer().getChannel().pipeline().addLast(new AuthResponseHandler());
-    }
-
-    public void close() {
     }
 
     public String getLogin() {
