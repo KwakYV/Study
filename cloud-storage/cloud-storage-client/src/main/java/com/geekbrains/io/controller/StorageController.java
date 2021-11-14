@@ -48,19 +48,17 @@ public class StorageController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        server = Server.getInstance(this::processMessage);
         try{
-            if (!server.isConnected()){
-                server.connect();
-            }
+            server = Server.getInstance(this::processMessage);
+//            if (!server.isConnected()){
+//                server.connect();
+//            }
         } catch (Exception e){
             log.error("Failed to connect on server", e);
         }
     }
 
     private void processMessage(ResponseMessage message) throws IOException {
-        runLater(() -> displayDir(message.getHierarchy()));
-
         if (message.getType().equals(CommandType.AUTH_OK_CMD)){
             this.login = message.getUser();
             runLater(() -> {
@@ -152,6 +150,7 @@ public class StorageController implements Initializable {
 
     @FXML
     public void sendMessage(ActionEvent actionEvent) throws IOException {
+        log.info(CloudStorageClient.INSTANCE.getUserName());
         String filePath = input.getText();
         Path file = Path.of(filePath);
         if (!Files.exists(file)){
@@ -174,7 +173,7 @@ public class StorageController implements Initializable {
         while (fileChannel.read(buffer) > 0){
             FileMessage message = new FileMessage(fileName, filePath, fileSize, Arrays.copyOfRange(buffer.array(), 0, buffer.position()));
             message.setType(CommandType.FILE_UPLOAD_CMD);
-            message.setLogin(this.login);
+            message.setLogin(CloudStorageClient.INSTANCE.getUserName());
             buffer.clear();
             server.getChannel().writeAndFlush(message);
         }
@@ -207,4 +206,8 @@ public class StorageController implements Initializable {
         server.getChannel().writeAndFlush(message);
     }
 
+    public void initController(String username, HashMap<String, List<String>> hierarchy) {
+        this.login = username;
+        runLater(() -> displayDir(hierarchy));
+    }
 }
