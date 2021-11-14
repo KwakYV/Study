@@ -27,6 +27,7 @@ public class FileMessageHandler extends SimpleChannelInboundHandler<FileMessage>
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, FileMessage fileMessage) throws Exception {
         String user = fileMessage.getLogin();
+        log.info("USer name - " + fileMessage.getLogin());
         userDir = Path.of("root").resolve(user);
 
         if (fileMessage.getType().equals(CommandType.FILE_UPLOAD_CMD)){

@@ -45,13 +45,6 @@ public class Server {
 
     private Server(Callback callback){
         this(SERVER_HOST, SERVER_PORT, callback);
-    }
-
-    public boolean isConnected() {
-        return isConnected;
-    }
-
-    public boolean connect(){
         Thread readThread = new Thread(() -> {
             EventLoopGroup workerGroup = new NioEventLoopGroup();
             try {
@@ -81,8 +74,44 @@ public class Server {
         readThread.setDaemon(true);
         readThread.start();
         isConnected = true;
-        return true;
     }
+
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+//    public boolean connect(){
+//        Thread readThread = new Thread(() -> {
+//            EventLoopGroup workerGroup = new NioEventLoopGroup();
+//            try {
+//                Bootstrap bootstrap = new Bootstrap();
+//                bootstrap.group(workerGroup)
+//                        .channel(NioSocketChannel.class)
+//                        .handler(new ChannelInitializer<SocketChannel>() {
+//                            @Override
+//                            protected void initChannel(SocketChannel socketChannel) throws Exception {
+//                                channel = socketChannel;
+//                                socketChannel.pipeline().addLast(
+////                                        new ChunkedWriteHandler(),
+//                                        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+//                                        new ObjectEncoder(),
+//                                        new AuthResponseHandler(callback)
+//                                );
+//                            }
+//                        });
+//                ChannelFuture future = bootstrap.connect(SERVER_HOST, SERVER_PORT).sync();
+//                future.channel().closeFuture().await();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            } finally {
+//                workerGroup.shutdownGracefully();
+//            }
+//        });
+//        readThread.setDaemon(true);
+//        readThread.start();
+//        isConnected = true;
+//        return true;
+//    }
 
     public SocketChannel getChannel() {
         return channel;

@@ -33,6 +33,12 @@ public class CloudStorageClient extends Application {
 
     Path clientDir;
 
+    public String getUserName() {
+        return userName;
+    }
+
+    String userName;
+
 
     @Override
     public void init() throws Exception {
@@ -115,6 +121,8 @@ public class CloudStorageClient extends Application {
 
     public void switchToMainChatWindow(String username, HashMap<String, List<String>> hierarchy) throws IOException {
         getPrimaryStage().setTitle(username);
+        getStorageController().initController(username, hierarchy);
+        this.userName = username;
         getAuthStage().close();
     }
 

@@ -58,7 +58,7 @@ public class AuthController {
 
     private boolean connectToServer() {
         Server server = getServer();
-        return server.isConnected() || server.connect();
+        return server.isConnected();
     }
 
     private Server getServer() {
